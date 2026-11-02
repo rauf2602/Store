@@ -83,7 +83,7 @@
                                 else
                                 {
                                     <div class="product-avatar color-@(product.Id % 8)">
-                                        @(product.Name.FirstOrDefault() + (product.Name.Length > 1 ? product.Name[1].ToString() : "")).ToUpper()
+                                        @((product.Name.Length > 1 ? product.Name[..2] : product.Name).ToUpper())
                                     </div>
                                 }
                             </div>
@@ -247,7 +247,7 @@
                 {
                     <div class="sale-card">
                         <div class="sale-header">
-                            <span class="sale-id">#{sale.Id}</span>
+                            <span class="sale-id">#@sale.Id</span>
                             <span class="sale-date">@sale.SaleDate.ToString("dd.MM HH:mm")</span>
                         </div>
                         <div class="sale-items">
@@ -1236,11 +1236,15 @@
         {
             await using var db = await DbFactory.CreateDbContextAsync();
             recentSales = await db.Sales
+                .Include(s => s.Items)
                 .OrderByDescending(s => s.SaleDate)
                 .Take(10)
                 .ToListAsync();
         }
-        catch { }
+        catch (Exception ex)
+        {
+            errorMessage = $"Failed to load recent sales: {ex.Message}";
+        }
     }
 
     private void FilterProducts()

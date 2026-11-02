@@ -22,6 +22,13 @@
         </div>
     </div>
 
+    @if (!string.IsNullOrEmpty(statsError))
+    {
+        <div class="alert alert-danger mb-4" style="background:#fef2f2;border:1px solid #fecaca;color:#991b1b;padding:12px 16px;border-radius:12px;">
+            ⚠️ @statsError
+        </div>
+    }
+
     @if (isLoading)
     {
         <div class="loading-state">
@@ -1057,6 +1064,7 @@
 @code {
     private bool isLoading = true;
     private DateTime selectedMonth = DateTime.Now;
+    private string statsError = "";
 
     private int totalIncoming;
     private int totalSold;
@@ -1118,6 +1126,7 @@
     private async Task LoadStats()
     {
         isLoading = true;
+        statsError = "";
         StateHasChanged();
 
         try
@@ -1161,7 +1170,10 @@
 
             recentLogs = logs.Take(20).ToList();
         }
-        catch { }
+        catch (Exception ex)
+        {
+            statsError = $"Database error: {ex.Message}";
+        }
         finally
         {
             isLoading = false;

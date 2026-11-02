@@ -10,15 +10,15 @@
     <div class="auth-card">
         <div class="mb-4">
             <label class="form-label">Username</label>
-            <input type="text" class="form-control" @bind="username" placeholder="Choose a username" />
+            <input type="text" class="form-control" @bind="username" @bind:event="oninput" placeholder="Choose a username" />
         </div>
         <div class="mb-4">
             <label class="form-label">Password</label>
-            <input type="password" class="form-control" @bind="password" placeholder="Choose a password" />
+            <input type="password" class="form-control" @bind="password" @bind:event="oninput" placeholder="Choose a password" />
         </div>
         <div class="mb-4">
             <label class="form-label">Confirm Password</label>
-            <input type="password" class="form-control" @bind="confirmPassword" placeholder="Confirm your password" />
+            <input type="password" class="form-control" @bind="confirmPassword" @bind:event="oninput" placeholder="Confirm your password" />
         </div>
 
         @if (!string.IsNullOrEmpty(errorMessage))

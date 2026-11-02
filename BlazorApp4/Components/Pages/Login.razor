@@ -15,8 +15,8 @@
         }
 
         <div class="login-form">
-            <input type="text" class="input-field" @bind="username" @bind:after="ClearError" placeholder="Username" @onkeydown="HandleEnter" />
-            <input type="password" class="input-field" @bind="password" @bind:after="ClearError" placeholder="Password" @onkeydown="HandleEnter" />
+            <input type="text" class="input-field" @bind="username" @bind:event="oninput" @bind:after="ClearError" placeholder="Username" @onkeydown="HandleEnter" />
+            <input type="password" class="input-field" @bind="password" @bind:event="oninput" @bind:after="ClearError" placeholder="Password" @onkeydown="HandleEnter" />
             <button class="btn-login" @onclick="HandleLogin" disabled="@(isLoggingIn)">
                 @(isLoggingIn ? "Signing in..." : "Sign In")
             </button>
@@ -192,6 +192,9 @@
     [Inject]
     private CustomAuthProvider AuthState { get; set; } = null!;
 
+    [Inject]
+    private ILogger<Login> Logger { get; set; } = null!;
+
     private void ClearError()
     {
         if (!string.IsNullOrEmpty(errorMessage))
@@ -232,9 +235,10 @@
             await AuthState.SetAuthAsync(user);
             Nav.NavigateTo("/");
         }
-        catch
+        catch (Exception ex)
         {
-            errorMessage = "An error occurred. Please try again.";
+            Logger.LogError(ex, "Login failed for user {Username}", username);
+            errorMessage = $"Login error: {ex.Message}";
         }
         finally
         {
